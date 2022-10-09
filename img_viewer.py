@@ -77,6 +77,15 @@ list_processing = [
     [ 
      sg.Button("Image Threshold", size=(20, 1), key="ImgThreshold"), 
     ], 
+    [ 
+     sg.Button("Image Translasi", size=(20, 1), key="ImgTranslasi"), 
+    ], 
+    [ 
+     sg.Button("Image TranslasiXY", size=(20, 1), key="ImgTranslasiXY"), 
+    ],
+    [ 
+     sg.Button("Image Flipping", size=(20, 1), key="ImgFlipping"), 
+    ], 
 ]
 
 
@@ -190,7 +199,7 @@ while True:
  
         try: 
             window["ImgProcessingType"].update("Image Brightness") 
-            img_output=ImgBrightness(img_input,coldepth,200) 
+            img_output=ImgBrightness(img_input,coldepth,100) 
             img_output.save(filename_out) 
             window["ImgOutputViewer"].update(filename=filename_out) 
         except: 
@@ -200,7 +209,7 @@ while True:
  
         try: 
             window["ImgProcessingType"].update("Image Logaritmic") 
-            img_output=ImgLogaritmic(img_input,coldepth,30) 
+            img_output=ImgLogaritmic(img_input,coldepth,100) 
             img_output.save(filename_out) 
             window["ImgOutputViewer"].update(filename=filename_out) 
         except: 
@@ -219,6 +228,7 @@ while True:
     elif event == "ImgThreshold": 
  
         try: 
+            print("ImgThreshold")
             window["ImgProcessingType"].update("Image Threshold") 
             img_output=ImgThreshold(img_input,coldepth,127) 
             img_output.save(filename_out) 
@@ -230,7 +240,47 @@ while True:
  
         try: 
             window["ImgBlending"].update("Image Blending") 
-            img_output=ImgBlending(img_input,img_input2,coldepth) 
+            img_output=ImgBlending(img_input,img_input2,coldepth,0.7) 
+            img_output.save(filename_out) 
+            window["ImgOutputViewer"].update(filename=filename_out) 
+        except: 
+            pass
+        
+    elif event == "ImgTranslasiXY":     
+ 
+        try: 
+            print("ImgTranslasiXY")
+            window["ImgTranslasiXY"].update("Image Translasi XY") 
+            img_output=ImgTranslasiXY(img_input,coldepth,50,100) 
+            img_output.save(filename_out) 
+            window["ImgOutputViewer"].update(filename=filename_out) 
+        except: 
+            pass
+        
+    elif event == "ImgTranslasi":    
+        
+        cons = 100
+        sumbu = "x"
+ 
+        try: 
+            print("ImgTranslasi")
+            window["ImgTranslasi"].update("Image Translasi") 
+            img_output=ImgTranslasi(img_input,coldepth,cons,sumbu) 
+            img_output.save(filename_out) 
+            window["ImgOutputViewer"].update(filename=filename_out) 
+        except: 
+            pass
+    
+    elif event == "ImgFlipping":
+        
+        hor = "horizontal"
+        ver = "vertical"
+        horver = "horizontalvertical"
+        
+ 
+        try: 
+            window["ImgFlipping"].update("Image Flipping") 
+            img_output=ImgFlipping(img_input,coldepth,horver) 
             img_output.save(filename_out) 
             window["ImgOutputViewer"].update(filename=filename_out) 
         except: 
