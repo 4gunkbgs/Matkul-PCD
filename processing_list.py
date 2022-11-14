@@ -1,5 +1,3 @@
-from queue import Empty
-from tkinter import Canvas
 from PIL import Image, ImageOps
 import math
 
@@ -88,7 +86,6 @@ def ImgRotate270(img_input, coldepth, deg):
     # solusi 1
     # img_output=img_input.rotate(deg)
 
-    print(deg)
     # solusi 2
     if coldepth != 24:
         img_input = img_input.convert('RGB')
@@ -500,12 +497,13 @@ def ImgShrinking(img_input, coldepth, scale):
         img_input = img_input.convert('RGB')
 
     img_output = Image.new(
-        'RGB', (int(img_input.size[1]/scale), int(img_input.size[0]/scale)))
+        'RGB', (int(img_input.size[0]/scale), int(img_input.size[1]/scale)))
     pixels = img_output.load()
+    pixels_input = img_input.load()
 
     for i in range(img_output.size[0]):
         for j in range(img_output.size[1]):
-            r, g, b = img_input.getpixel((i*scale, j*scale))
+            r, g, b = pixels_input[i*scale, j*scale]
             pixels[i, j] = (r, g, b)
 
     if coldepth == 1:
@@ -734,7 +732,7 @@ def ImgTest8(img_input, img_input2, coldepth):
     pixels = img_output.load()
     for i in range(img_input.size[0]):
         for j in range(img_input.size[1]):
-            if i < img_input2.size[0] and j < img_input2.size[1]:
+            if i < img_input.size[0]/2 and j < img_input.size[1]/2:
                 r, g, b = img_input.getpixel((i, j))
                 r2, g2, b2 = img_input2.getpixel((i, j))
                 r_blend = int(0.5*r + (1-0.5)*r2)
@@ -744,6 +742,8 @@ def ImgTest8(img_input, img_input2, coldepth):
             else:
                 r, g, b = img_input.getpixel((i, j))
                 pixels[i, j] = (r, g, b)
+
+    img_output = ImgBrightness(img_output, coldepth, 50)
 
     if coldepth == 1:
         img_output = img_output.convert("1")
@@ -793,46 +793,80 @@ def ImgTest9(img_input, coldepth):
     return canvas
 
 
+def ImgShrinking2(img_input, coldepth, scale):
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    pixels = img_input.load()
+    horizontalSize = img_input.size[0]
+    verticalSize = img_input.size[1]
+    img_output = Image.new("RGB", (horizontalSize//scale, verticalSize//scale))
+    newPixels = img_output.load()
+    for i in range(horizontalSize//scale):
+        for j in range(verticalSize//scale):
+            r, g, b = pixels[i*scale, j*scale]
+            newPixels[i, j] = (r, g, b)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+    return img_output
+
+
 def ImgTest10(img_input, img_input2, coldepth):
 
     if coldepth != 25:
         img_input = img_input.convert('RGB')
         img_input2 = img_input2.convert('RGB')
 
-    print(img_input.size)
-    print(img_input2.size)
-
-    img_input_pixels = img_input.load()
-    horizontal_size = img_input.size[0]
-    vertical_size = img_input.size[1]
+    # img_input_pixels = img_input.load()
+    # horizontal_size = img_input.size[0]
+    # vertical_size = img_input.size[1]
 
     # flipping image1
-    img_input_flip = Image.new('RGB', (img_input.size[1], img_input.size[0]))
-    pixels = img_input_flip.load()
+    img_input_flip = ImgFlippingHor(img_input, coldepth, "horizontal")
+    # img_input_flip = Image.new('RGB', (img_input.size[1], img_input.size[0]))
+    # pixels = img_input_flip.load()
 
-    for i in range(horizontal_size):
-        for j in range(vertical_size):
-            pixels[i, j] = img_input_pixels[horizontal_size-1-i, j]
+    # for i in range(horizontal_size):
+    #     for j in range(vertical_size):
+    #         pixels[i, j] = img_input_pixels[horizontal_size-1-i, j]
+
+    print(img_input)
+    print(img_input2)
 
     # shrinking image2 & rotating image2
     img_input2_shrink = ImgShrinking(img_input2, coldepth, 4)
     img_input2_shrink = ImgRotate270(img_input2_shrink, coldepth, 270)
 
     # blending image1 and image2
+    img_input_flip = img_input_flip.convert('RGB')
+    img_input2_shrink = img_input2_shrink.convert('RGB')
+
     canvas = Image.new('RGB', (img_input_flip.size[0], img_input_flip.size[1]))
     canvas_pixels = canvas.load()
+
+    print('ini size kanvas')
+    print(canvas.size)
+
+    img_input_flip_pixels = img_input_flip.load()
+    img_input2_shrink_pixels = img_input2_shrink.load()
 
     for i in range(img_input_flip.size[0]):
         for j in range(img_input_flip.size[1]):
             if i < img_input2_shrink.size[0] and j < img_input2_shrink.size[1]:
-                r, g, b = img_input_flip.getpixel((i, j))
-                r2, g2, b2 = img_input2_shrink.getpixel((i, j))
+                r, g, b = img_input_flip_pixels[i, j]
+                r2, g2, b2 = img_input2_shrink_pixels[i, j]
+                # canvas_pixels[i, j] = (r//2+r2//2, g//2+g2//2, b//2+b2//2)
                 r_blend = int(0.5*r + (1-0.5)*r2)
                 g_blend = int(0.5*g + (1-0.5)*g2)
                 b_blend = int(0.5*b + (1-0.5)*b2)
                 canvas_pixels[i, j] = (r_blend, g_blend, b_blend)
             else:
-                r, g, b = img_input_flip.getpixel((i, j))
+                r, g, b = img_input_flip_pixels[i, j]
                 canvas_pixels[i, j] = (r, g, b)
 
     if coldepth == 1:
@@ -859,6 +893,8 @@ def ImgTest11(img_input, img_input2, coldepth):
     # blending image1 and image2
     canvas = Image.new('RGB', (img_input.size[0], img_input.size[1]))
     canvas_pixels = canvas.load()
+
+    img_input2_shrink = img_input2_shrink.convert('RGB')
 
     for i in range(img_input.size[0]):
         for j in range(img_input.size[1]):
@@ -895,29 +931,250 @@ def ImgTest12(img_input, coldepth):
     img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
 
     pixels = img_output.load()
+
+    # #solusi 1
+    # for i in range(img_output.size[0]):
+    #     for j in range(img_output.size[1]):
+    #         r, g, b = img_input.getpixel((i, j))
+    #         if i < img_output.size[0]/2 and j < img_output.size[1]/2:
+    #             if i <= j:
+    #                 pixels[i, j] = (255-r, 255-g, 255-b)
+    #             else:
+    #                 pixels[i, j] = (r, g, b)
+    #         if i >= img_output.size[0]/2 and j < img_output.size[1]/2:
+    #             if i-img_output.size[0]/2+j < img_output.size[1]/2:
+    #                 pixels[i, j] = (r, g, b)
+    #             else:
+    #                 pixels[i, j] = (255-r, 255-g, 255-b)
+    #         if i < img_output.size[0]/2 and j >= img_output.size[1]/2:
+    #             if i+(j-img_output.size[1]/2) < img_output.size[0]/2:
+    #                 pixels[i, j] = (255-r, 255-g, 255-b)
+    #             else:
+    #                 pixels[i, j] = (r, g, b)
+    #         if i >= img_output.size[0]/2 and j >= img_output.size[1]/2:
+    #             if i >= j:
+    #                 pixels[i, j] = (255-r, 255-g, 255-b)
+    #             else:
+    #                 pixels[i, j] = (r, g, b)
+
+    # solusi 2
     for i in range(img_output.size[0]):
         for j in range(img_output.size[1]):
             r, g, b = img_input.getpixel((i, j))
-            if i < img_output.size[0]/2 and j < img_output.size[1]/2:
-                if i <= j:
+            if i <= j:
+                if i+j < img_output.size[1]:
                     pixels[i, j] = (255-r, 255-g, 255-b)
                 else:
                     pixels[i, j] = (r, g, b)
-            if i >= img_output.size[0]/2 and j < img_output.size[1]/2:
-                if i-img_output.size[0]/2+j < img_output.size[1]/2:
+            else:
+                if i+j < img_output.size[0]:
                     pixels[i, j] = (r, g, b)
                 else:
                     pixels[i, j] = (255-r, 255-g, 255-b)
-            if i < img_output.size[0]/2 and j >= img_output.size[1]/2:
-                if i+(j-img_output.size[1]/2) < img_output.size[0]/2:
-                    pixels[i, j] = (255-r, 255-g, 255-b)
-                else:
-                    pixels[i, j] = (r, g, b)
-            if i >= img_output.size[0]/2 and j >= img_output.size[1]/2:
-                if i >= j:
-                    pixels[i, j] = (255-r, 255-g, 255-b)
-                else:
-                    pixels[i, j] = (r, g, b)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# slicing image into 4 parts
+
+
+def ImgTest13(img_input, coldepth):
+
+    if coldepth != 25:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new(
+        'RGB', (int(img_input.size[1]/2), int(img_input.size[0]/2)))
+    pixels = img_output.load()
+
+    for i in range(img_output.size[0]):
+        for j in range(img_output.size[1]):
+            r, g, b = img_input.getpixel((i*2, j*2))
+            pixels[i, j] = (r, g, b)
+
+    canvas = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    canvas_pixels = canvas.load()
+
+    for i in range(img_output.size[0]):
+        for j in range(img_output.size[1]):
+            r, g, b = img_output.getpixel((i, j))
+            if i < img_output.size[0]/2:
+                canvas_pixels[i, j] = (r, g, b)
+            canvas_pixels[i+img_input.size[0]/2, j] = (r, g, b)
+            canvas_pixels[i, j+img_input.size[1]/2] = (r, g, b)
+            canvas_pixels[i+img_input.size[0]/2,
+                          j+img_input.size[1]/2] = (r, g, b)
+
+            # if i < img_output.size[0]/2:
+            #     if j < int(img_output.size[1]/2):
+            #         if j < int(img_output.size[1]/4):
+            #             gray = (r+g+b)//3
+            #             pixels[i, j] = (gray, gray, gray)
+            #         else:
+            #             pixels[i, j] = (r, g, b)
+            #     else:
+            #         pixels[i, j] = (255-r, 255-g, 255-b)
+            # else:
+            #     if j < int(img_output.size[0]/2):
+            #         pixels[i, j] = (255-r, 255-g, 255-b)
+            #     else:
+            #         pixels[i, j] = (r, g, b)
+
+    if coldepth == 1:
+        canvas = canvas.convert("1")
+    elif coldepth == 8:
+        canvas = canvas.convert("L")
+    else:
+        canvas = canvas.convert("RGB")
+
+    return canvas
+
+# blending 2 image with different size:
+
+
+def ImgTest14(img_input, img_input2, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+        img_input2 = img_input2.convert('RGB')
+
+    img_input2 = ImgShrinking(img_input2, coldepth, 4)
+    img_input2 = img_input2.convert('RGB')
+
+    canvas = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    canvas_pixels = canvas.load()
+
+    for i in range(img_input.size[0]):
+        for j in range(img_input.size[1]):
+            if i < img_input2.size[0] and j < img_input2.size[1]:
+                r, g, b = img_input.getpixel((i, j))
+                r2, g2, b2 = img_input2.getpixel((i, j))
+                canvas_pixels[i, j] = (r2, g2, b2)
+
+    if coldepth == 1:
+        canvas = canvas.convert("1")
+    elif coldepth == 8:
+        canvas = canvas.convert("L")
+    else:
+        canvas = canvas.convert("RGB")
+
+    return canvas
+
+
+def ImgMedianFilter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    print(img_input.size[0])
+    print(img_input.size[1])
+
+    for i in range(1, img_input.size[0]-1):
+        for j in range(1, img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i-1, j-1))
+            r3, g3, b3 = img_input.getpixel((i-1, j))
+            r4, g4, b4 = img_input.getpixel((i-1, j+1))
+            r5, g5, b5 = img_input.getpixel((i, j-1))
+            r6, g6, b6 = img_input.getpixel((i, j+1))
+            r7, g7, b7 = img_input.getpixel((i+1, j-1))
+            r8, g8, b8 = img_input.getpixel((i+1, j))
+            r9, g9, b9 = img_input.getpixel((i+1, j+1))
+            r_list = [r, r2, r3, r4, r5, r6, r7, r8, r9]
+            g_list = [g, g2, g3, g4, g5, g6, g7, g8, g9]
+            b_list = [b, b2, b3, b4, b5, b6, b7, b8, b9]
+            r_list.sort()
+            g_list.sort()
+            b_list.sort()
+            pixels[i, j] = (r_list[4], g_list[4], b_list[4])
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def ImgMeanFilter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    for i in range(1, img_input.size[0]-1):
+        for j in range(1, img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i-1, j-1))
+            r3, g3, b3 = img_input.getpixel((i-1, j))
+            r4, g4, b4 = img_input.getpixel((i-1, j+1))
+            r5, g5, b5 = img_input.getpixel((i, j-1))
+            r6, g6, b6 = img_input.getpixel((i, j+1))
+            r7, g7, b7 = img_input.getpixel((i+1, j-1))
+            r8, g8, b8 = img_input.getpixel((i+1, j))
+            r9, g9, b9 = img_input.getpixel((i+1, j+1))
+            r_list = [r, r2, r3, r4, r5, r6, r7, r8, r9]
+            g_list = [g, g2, g3, g4, g5, g6, g7, g8, g9]
+            b_list = [b, b2, b3, b4, b5, b6, b7, b8, b9]
+            r_mean = sum(r_list)//len(r_list)
+            g_mean = sum(g_list)//len(g_list)
+            b_mean = sum(b_list)//len(b_list)
+            pixels[i, j] = (r_mean, g_mean, b_mean)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def ImgTestFilter(img_input, coldepth, n):
+
+    print(n)
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    for i in range(n//2, img_input.size[0]-n//2):
+        for j in range(n//2, img_input.size[1]-n//2):
+            r = []
+            b = []
+            g = []
+            for k in range(n):
+                for l in range(n):
+                    # creating a list of the pixels around the pixel
+                    r.append(img_input.getpixel((i+k-n//2, j+l-n//2))[0])
+                    g.append(img_input.getpixel((i+k-n//2, j+l-n//2))[1])
+                    b.append(img_input.getpixel((i+k-n//2, j+l-n//2))[2])
+            # sorting the lists
+            r.sort()
+            g.sort()
+            b.sort()
+            # finding the median of the lists
+            r_med = r[len(r)//2]
+            g_med = g[len(g)//2]
+            b_med = b[len(b)//2]
+            # setting the pixel to the median value
+            pixels[i, j] = (r_med, g_med, b_med)
 
     if coldepth == 1:
         img_output = img_output.convert("1")

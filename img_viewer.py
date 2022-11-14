@@ -119,25 +119,38 @@ list_processing = [
         sg.In(size=(5, 1), key="skala"),
     ],
     [sg.HSeparator()],
+    # [
+    #     sg.Button("Test", size=(8, 1), key="Test"),
+    #     sg.Button("Test2", size=(8, 1), key="Test2"),
+    #     sg.Button("Test3", size=(8, 1), key="Test3"),
+    # ],
+    # [
+    #     sg.Button("Test4", size=(8, 1), key="Test4"),
+    #     sg.Button("Test5", size=(8, 1), key="Test5"),
+    #     sg.Button("Test6", size=(8, 1), key="Test6"),
+    # ],
+    # [
+    #     sg.Button("Test7", size=(8, 1), key="Test7"),
+    #     sg.Button("Test8", size=(8, 1), key="Test8"),
+    #     sg.Button("Test9", size=(8, 1), key="Test9"),
+    # ],
+    # [
+    #     sg.Button("Test10", size=(8, 1), key="Test10"),
+    #     sg.Button("Test11", size=(8, 1), key="Test11"),
+    #     sg.Button("Test12", size=(8, 1), key="Test12"),
+    # ],
+    # [
+    #     sg.Button("Test13", size=(8, 1), key="Test13"),
+    #     sg.Button("Test14", size=(8, 1), key="Test14"),
+    # ]
     [
-        sg.Button("Test", size=(8, 1), key="Test"),
-        sg.Button("Test2", size=(8, 1), key="Test2"),
-        sg.Button("Test3", size=(8, 1), key="Test3"),
+        sg.Button("Median Filter", size=(10, 1), key="MedianFilter"),
+        sg.Button("Mean Filter", size=(10, 1), key="MeanFilter"),
     ],
     [
-        sg.Button("Test4", size=(8, 1), key="Test4"),
-        sg.Button("Test5", size=(8, 1), key="Test5"),
-        sg.Button("Test6", size=(8, 1), key="Test6"),
-    ],
-    [
-        sg.Button("Test7", size=(8, 1), key="Test7"),
-        sg.Button("Test8", size=(8, 1), key="Test8"),
-        sg.Button("Test9", size=(8, 1), key="Test9"),
-    ],
-    [
-        sg.Button("Test10", size=(8, 1), key="Test10"),
-        sg.Button("Test11", size=(8, 1), key="Test11"),
-        sg.Button("Test12", size=(8, 1), key="Test12"),
+        sg.Button("Test Filter", size=(10, 1), key="testfilter"),
+        sg.Text("Size Masking:"),
+        sg.In(size=(5, 1), key="mask"),
     ]
 ]
 
@@ -417,127 +430,180 @@ while True:
         except:
             pass
 
-    elif event == "Test":
+    # elif event == "Test":
+
+    #     try:
+    #         window["Test"].update("Test")
+    #         img_output = ImgTest(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test2":
+
+    #     try:
+    #         window["Test2"].update("Test2")
+    #         img_output = ImgTest2(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test3":
+
+    #     try:
+    #         window["Test3"].update("Test3")
+    #         img_output = ImgTest3(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test4":
+
+    #     try:
+    #         window["Test4"].update("Test4")
+    #         img_output = ImgTest4(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test5":
+
+    #     try:
+    #         window["Test5"].update("Test5")
+    #         img_output = ImgTest5(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test6":
+
+    #     try:
+    #         window["Test6"].update("Test6")
+    #         img_output = ImgTest6(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test7":
+
+    #     try:
+    #         print('test7')
+    #         window["Test7"].update("Test7")
+    #         img_output = ImgTest7(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test8":
+
+    #     try:
+    #         print('test8')
+    #         window["Test8"].update("Test8")
+    #         img_output = ImgTest8(img_input, img_input2, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test9":
+
+    #     try:
+    #         print('test9')
+    #         window["Test9"].update("Test9")
+    #         img_output = ImgTest9(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test10":
+
+    #     try:
+    #         print('test10')
+    #         window["Test10"].update("Test10")
+    #         img_output = ImgTest10(img_input, img_input2, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test11":
+
+    #     try:
+    #         print('test11')
+    #         window["Test11"].update("Test11")
+    #         img_output = ImgTest11(img_input, img_input2, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test12":
+
+    #     try:
+    #         print('test12')
+    #         window["Test12"].update("Test12")
+    #         img_output = ImgTest12(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test13":
+
+    #     try:
+    #         print('test13')
+    #         window["Test13"].update("Test13")
+    #         img_output = ImgTest13(img_input, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    # elif event == "Test14":
+
+    #     try:
+    #         print('test14')
+    #         window["Test14"].update("Test14")
+    #         img_output = ImgTest14(img_input, img_input2, coldepth)
+    #         img_output.save(filename_out)
+    #         window["ImgOutputViewer"].update(filename=filename_out)
+    #     except:
+    #         pass
+
+    elif event == "MedianFilter":
 
         try:
-            window["Test"].update("Test")
-            img_output = ImgTest(img_input, coldepth)
+            window["MedianFilter"].update("Median Filter")
+            img_output = ImgMedianFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
             pass
 
-    elif event == "Test2":
+    elif event == "MeanFilter":
 
         try:
-            window["Test2"].update("Test2")
-            img_output = ImgTest2(img_input, coldepth)
+            window["MeanFilter"].update("Mean Filter")
+            img_output = ImgMeanFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
             pass
 
-    elif event == "Test3":
+    elif event == "testfilter":
 
         try:
-            window["Test3"].update("Test3")
-            img_output = ImgTest3(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test4":
-
-        try:
-            window["Test4"].update("Test4")
-            img_output = ImgTest4(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test5":
-
-        try:
-            window["Test5"].update("Test5")
-            img_output = ImgTest5(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test6":
-
-        try:
-            window["Test6"].update("Test6")
-            img_output = ImgTest6(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test7":
-
-        try:
-            print('test7')
-            window["Test7"].update("Test7")
-            img_output = ImgTest7(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test8":
-
-        try:
-            print('test8')
-            window["Test8"].update("Test8")
-            img_output = ImgTest8(img_input, img_input2, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test9":
-
-        try:
-            print('test9')
-            window["Test9"].update("Test9")
-            img_output = ImgTest9(img_input, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test10":
-
-        try:
-            print('test10')
-            window["Test10"].update("Test10")
-            img_output = ImgTest10(img_input, img_input2, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test11":
-
-        try:
-            print('test11')
-            window["Test11"].update("Test11")
-            img_output = ImgTest11(img_input, img_input2, coldepth)
-            img_output.save(filename_out)
-            window["ImgOutputViewer"].update(filename=filename_out)
-        except:
-            pass
-
-    elif event == "Test12":
-
-        try:
-            print('test12')
-            window["Test12"].update("Test12")
-            img_output = ImgTest12(img_input, coldepth)
+            value = int(values["mask"])
+            window["testfilter"].update("testfilter")
+            img_output = ImgTestFilter(img_input, coldepth, value)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
