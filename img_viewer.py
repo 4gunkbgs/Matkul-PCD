@@ -148,9 +148,30 @@ list_processing = [
         sg.Button("Mean Filter", size=(10, 1), key="MeanFilter"),
     ],
     [
+        sg.Button("Min Filter", size=(10, 1), key="MinFilter"),
+        sg.Button("Max Filter", size=(10, 1), key="MaxFilter"),
+    ],
+    [
         sg.Button("Test Filter", size=(10, 1), key="testfilter"),
         sg.Text("Size Masking:"),
         sg.In(size=(5, 1), key="mask"),
+    ],
+    [sg.HSeparator()],
+    [
+        sg.Button("Weight Filter", size=(10, 1), key="WeightMeanFilter"),
+        sg.Button("Gradien1 Filter", size=(11, 1), key="Gradien1Filter"),
+    ],
+    [
+        sg.Button("CenterDif Filter", size=(11, 1), key="CenterDifFilter"),
+        sg.Button("Sobel Filter", size=(11, 1), key="SobelFilter"),
+    ],
+    [
+        sg.Button("Prewitt Filter", size=(11, 1), key="PrewittFilter"),
+        sg.Button("Robert Filter", size=(11, 1), key="RobertFilter"),
+    ],
+    [
+        sg.Button("Laplacian Filter", size=(11, 1), key="LaplacianFilter"),
+        sg.Button("Kompas Filter", size=(11, 1), key="KompasFilter"),
     ]
 ]
 
@@ -608,5 +629,86 @@ while True:
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
             pass
+
+    elif event == "MinFilter":
+
+        try:
+            window["MinFilter"].update("Min Filter")
+            img_output = ImgMinFiltering(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "MaxFilter":
+
+        try:
+            window["MaxFilter"].update("Max Filter")
+            img_output = ImgMaxFiltering(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "WeightMeanFilter":
+
+        try:
+            window["WeightMeanFilter"].update("Weight Filter")
+            img_output = WeightMeanFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Gradien1Filter":
+
+        try:
+            window["Gradien1Filter"].update("Gradien1 Filter")
+            img_output = Gradien1Filter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "CenterDifFilter":
+
+        try:
+            window["CenterDifFilter"].update("CenterDif Filter")
+            img_output = CenterDifFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "SobelFilter":
+
+        try:
+            window["SobelFilter"].update("Sobel Filter")
+            img_output = SobelFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "PrewittFilter":
+
+        try:
+            window["PrewittFilter"].update("Prewitt Filter")
+            img_output = PrewittFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "RobertFilter":
+
+        try:
+            window["RobertFilter"].update("Robert Filter")
+            img_output = RobertFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
 
 window.close()

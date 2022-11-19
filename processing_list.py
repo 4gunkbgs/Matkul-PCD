@@ -1184,3 +1184,416 @@ def ImgTestFilter(img_input, coldepth, n):
         img_output = img_output.convert("RGB")
 
     return img_output
+
+
+def ImgMinFiltering(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    for i in range(1, img_input.size[0]-1):
+        for j in range(1, img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i-1, j-1))
+            r3, g3, b3 = img_input.getpixel((i-1, j))
+            r4, g4, b4 = img_input.getpixel((i-1, j+1))
+            r5, g5, b5 = img_input.getpixel((i, j-1))
+            r6, g6, b6 = img_input.getpixel((i, j+1))
+            r7, g7, b7 = img_input.getpixel((i+1, j-1))
+            r8, g8, b8 = img_input.getpixel((i+1, j))
+            r9, g9, b9 = img_input.getpixel((i+1, j+1))
+            r_list = [r, r2, r3, r4, r5, r6, r7, r8, r9]
+            g_list = [g, g2, g3, g4, g5, g6, g7, g8, g9]
+            b_list = [b, b2, b3, b4, b5, b6, b7, b8, b9]
+            r_min = min(r_list)
+            g_min = min(g_list)
+            b_min = min(b_list)
+            pixels[i, j] = (r_min, g_min, b_min)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def ImgMaxFiltering(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    for i in range(1, img_input.size[0]-1):
+        for j in range(1, img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i-1, j-1))
+            r3, g3, b3 = img_input.getpixel((i-1, j))
+            r4, g4, b4 = img_input.getpixel((i-1, j+1))
+            r5, g5, b5 = img_input.getpixel((i, j-1))
+            r6, g6, b6 = img_input.getpixel((i, j+1))
+            r7, g7, b7 = img_input.getpixel((i+1, j-1))
+            r8, g8, b8 = img_input.getpixel((i+1, j))
+            r9, g9, b9 = img_input.getpixel((i+1, j+1))
+            r_list = [r, r2, r3, r4, r5, r6, r7, r8, r9]
+            g_list = [g, g2, g3, g4, g5, g6, g7, g8, g9]
+            b_list = [b, b2, b3, b4, b5, b6, b7, b8, b9]
+            r_max = max(r_list)
+            g_max = max(g_list)
+            b_max = max(b_list)
+            pixels[i, j] = (r_max, g_max, b_max)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def WeightMeanFilter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    pixels = img_output.load()
+
+    koef1 = 2
+    koef2 = 4
+
+    for i in range(1, img_input.size[0]-1):
+        for j in range(1, img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))  # tengah
+            r2, g2, b2 = img_input.getpixel((i-1, j-1))  # kiri atas
+            r3, g3, b3 = img_input.getpixel((i-1, j))  # kiri
+            r4, g4, b4 = img_input.getpixel((i-1, j+1))  # kiri bawah
+            r5, g5, b5 = img_input.getpixel((i, j-1))  # tengah atas
+            r6, g6, b6 = img_input.getpixel((i, j+1))  # tengah bawah
+            r7, g7, b7 = img_input.getpixel((i+1, j-1))  # kanan atas
+            r8, g8, b8 = img_input.getpixel((i+1, j))  # kanan
+            r9, g9, b9 = img_input.getpixel((i+1, j+1))  # kanan bawah
+            r_list = [r*koef2, r2, r3*koef1, r4,
+                      r5*koef1, r6*koef1, r7, r8*koef1, r9]
+            g_list = [g*koef2, g2, g3*koef1, g4,
+                      g5*koef1, g6*koef1, g7, g8*koef1, g9]
+            b_list = [b*koef2, b2, b3*koef1, b4,
+                      b5*koef1, b6*koef1, b7, b8*koef1, b9]
+            r_mean = sum(r_list)//16
+            g_mean = sum(g_list)//16  # karena 16 adalah jumlah koefisien
+            b_mean = sum(b_list)//16
+            pixels[i, j] = (r_mean, g_mean, b_mean)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def WeightMeanFilter2(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+    box_kernel = [
+        [1 / 9, 1 / 9, 1 / 9],
+        [1 / 9, 1 / 9, 1 / 9],
+        [1 / 9, 1 / 9, 1 / 9]]
+
+    kernel = box_kernel
+    offset = len(kernel)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            acc = [0, 0, 0]
+            for a in range(len(kernel)):
+                for b in range(len(kernel)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    acc[0] += pixel[0] * kernel[a][b]
+                    acc[1] += pixel[1] * kernel[a][b]
+                    acc[2] += pixel[2] * kernel[a][b]
+            output_pixels[x, y] = (int(acc[0]), int(acc[1]), int(acc[2]))
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image
+
+
+def Gradien1Filter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+
+    pixels = img_output.load()
+    pixels_x = img_output.load()
+    pixels_y = img_output.load()
+
+    mask = [-1, 1]
+    # mask2 = [1, -1]
+
+    for i in range(img_input.size[0]-1):
+        for j in range(img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i+1, j))  # kanan
+            r3, g3, b3 = img_input.getpixel((i, j+1))  # bawah
+
+            # print(r2)
+
+            r_sum_x = (r*mask[0])+(r2*mask[1])
+            g_sum_x = (g*mask[0])+(g2*mask[1])
+            b_sum_x = (b*mask[0])+(b2*mask[1])
+            pixels_x[i, j] = (r_sum_x, g_sum_x, b_sum_x)
+
+            r_sum_y = (r*mask[1])+(r3*mask[0])
+            g_sum_y = (g*mask[1])+(g3*mask[0])
+            b_sum_y = (b*mask[1])+(b3*mask[0])
+            pixels_y[i, j] = (r_sum_y, g_sum_y, b_sum_y)
+
+            r_sum_xy = (abs(r_sum_x))+(abs(r_sum_y))
+            g_sum_xy = (abs(g_sum_x))+(abs(g_sum_y))
+            b_sum_xy = (abs(b_sum_x))+(abs(b_sum_y))
+            pixels[i, j] = (r_sum_xy, g_sum_xy, b_sum_xy)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def CenterDifFilter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+
+    pixels_x = img_output.load()
+    pixels_y = img_output.load()
+    pixels = img_output.load()
+
+    mask = [-1, 0, 1]
+    # mask2 = [1, 0, -1]
+
+    for i in range(img_input.size[0]-2):
+        for j in range(img_input.size[1]-2):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i+1, j))  # kanan
+            r3, g3, b3 = img_input.getpixel((i+2, j))  # kanan2
+            r4, g4, b4 = img_input.getpixel((i, j+1))  # bawah
+            r5, g5, b5 = img_input.getpixel((i, j+2))  # bawah2
+
+            # print(r2)
+            r_sum_x = (r*mask[0])+(r2*mask[1])+r3*mask[2]
+            g_sum_x = (g*mask[0])+(g2*mask[1])+g3*mask[2]
+            b_sum_x = (b*mask[0])+(b2*mask[1])+b3*mask[2]
+            pixels_x[i, j] = (r_sum_x, g_sum_x, b_sum_x)
+
+            r_sum_y = (r*mask[2])+(r4*mask[1])+r5*mask[0]
+            g_sum_y = (g*mask[2])+(g4*mask[1])+g5*mask[0]
+            b_sum_y = (b*mask[2])+(b4*mask[1])+b5*mask[0]
+            pixels_y[i, j] = (r_sum_y, g_sum_y, b_sum_y)
+
+            r_sum_xy = (abs(r_sum_x))+(abs(r_sum_y))
+            g_sum_xy = (abs(g_sum_x))+(abs(g_sum_y))
+            b_sum_xy = (abs(b_sum_x))+(abs(b_sum_y))
+            pixels[i, j] = (r_sum_xy, g_sum_xy, b_sum_xy)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+
+def SobelFilter(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+    box_kernel_x = [
+        [-1, 0, 1],
+        [-2, 0, 2],
+        [-1, 0, 1]]
+
+    box_kernel_y = [
+        [1, 2, 1],
+        [0, 0, 0],
+        [-1, -2, -1]]
+
+    kernel_x = box_kernel_x
+    kernel_y = box_kernel_y
+    offset = len(kernel_x)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            pixel_sx = [0, 0, 0]
+            pixel_sy = [0, 0, 0]
+
+            for a in range(len(kernel_x)):
+                for b in range(len(kernel_x)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    pixel_sx[0] += pixel[0] * kernel_x[a][b]
+                    pixel_sx[1] += pixel[1] * kernel_x[a][b]
+                    pixel_sx[2] += pixel[2] * kernel_x[a][b]
+
+                    pixel_sy[0] += pixel[0] * kernel_y[a][b]
+                    pixel_sy[1] += pixel[1] * kernel_y[a][b]
+                    pixel_sy[2] += pixel[2] * kernel_y[a][b]
+
+            r_sum = abs(pixel_sx[0])+abs(pixel_sy[0])
+            g_sum = abs(pixel_sx[1])+abs(pixel_sy[1])
+            b_sum = abs(pixel_sx[2])+abs(pixel_sy[2])
+
+            output_pixels[x, y] = (r_sum, g_sum, b_sum)
+
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image
+
+
+def PrewittFilter(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+    box_kernel_x = [
+        [-1, 0, 1],
+        [-1, 0, 1],
+        [-1, 0, 1]]
+
+    box_kernel_y = [
+        [1, 1, 1],
+        [0, 0, 0],
+        [-1, -1, -1]]
+
+    kernel_x = box_kernel_x
+    kernel_y = box_kernel_y
+    offset = len(kernel_x)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            pixel_sx = [0, 0, 0]
+            pixel_sy = [0, 0, 0]
+
+            for a in range(len(kernel_x)):
+                for b in range(len(kernel_x)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    pixel_sx[0] += pixel[0] * kernel_x[a][b]
+                    pixel_sx[1] += pixel[1] * kernel_x[a][b]
+                    pixel_sx[2] += pixel[2] * kernel_x[a][b]
+
+                    pixel_sy[0] += pixel[0] * kernel_y[a][b]
+                    pixel_sy[1] += pixel[1] * kernel_y[a][b]
+                    pixel_sy[2] += pixel[2] * kernel_y[a][b]
+
+            r_sum = abs(pixel_sx[0])+abs(pixel_sy[0])
+            g_sum = abs(pixel_sx[1])+abs(pixel_sy[1])
+            b_sum = abs(pixel_sx[2])+abs(pixel_sy[2])
+
+            output_pixels[x, y] = (r_sum, g_sum, b_sum)
+
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image
+
+
+def RobertFilter(img_input, coldepth):
+
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    img_output = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+
+    pixels = img_output.load()
+    pixels_x = img_output.load()
+    pixels_y = img_output.load()
+
+    mask = [1, -1]
+    # mask2 = [-1, 1]
+
+    for i in range(img_input.size[0]-1):
+        for j in range(img_input.size[1]-1):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_input.getpixel((i+1, j))  # kanan
+            r3, g3, b3 = img_input.getpixel((i, j+1))  # bawah
+            r4, g4, b4 = img_input.getpixel((i+1, j+1))  # kanan bawah
+
+            # print(r2)
+
+            r_sum_x = (r*mask[0])+(r4*mask[1])
+            g_sum_x = (g*mask[0])+(g4*mask[1])
+            b_sum_x = (b*mask[0])+(b4*mask[1])
+            pixels_x[i, j] = (r_sum_x, g_sum_x, b_sum_x)
+
+            r_sum_y = (r2*mask[0])+(r3*mask[1])
+            g_sum_y = (g2*mask[0])+(g3*mask[1])
+            b_sum_y = (b2*mask[0])+(b3*mask[1])
+            pixels_y[i, j] = (r_sum_y, g_sum_y, b_sum_y)
+
+            r_sum_xy = (abs(r_sum_x))+(abs(r_sum_y))
+            g_sum_xy = (abs(g_sum_x))+(abs(g_sum_y))
+            b_sum_xy = (abs(b_sum_x))+(abs(b_sum_y))
+            pixels[i, j] = (r_sum_xy, g_sum_xy, b_sum_xy)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
