@@ -159,19 +159,19 @@ list_processing = [
     [sg.HSeparator()],
     [
         sg.Button("Weight Filter", size=(10, 1), key="WeightMeanFilter"),
-        sg.Button("Gradien1 Filter", size=(11, 1), key="Gradien1Filter"),
+        sg.Button("Gradien1 Operator", size=(14, 1), key="Gradien1Filter"),
     ],
     [
-        sg.Button("CenterDif Filter", size=(11, 1), key="CenterDifFilter"),
-        sg.Button("Sobel Filter", size=(11, 1), key="SobelFilter"),
+        sg.Button("CenterDif Operator", size=(14, 1), key="CenterDifFilter"),
+        sg.Button("Sobel Operator", size=(11, 1), key="SobelFilter"),
     ],
     [
-        sg.Button("Prewitt Filter", size=(11, 1), key="PrewittFilter"),
-        sg.Button("Robert Filter", size=(11, 1), key="RobertFilter"),
+        sg.Button("Prewitt Operator", size=(12, 1), key="PrewittFilter"),
+        sg.Button("Robert Operator", size=(12, 1), key="RobertFilter"),
     ],
     [
-        sg.Button("Laplacian Filter", size=(11, 1), key="LaplacianFilter"),
-        sg.Button("Kompas Filter", size=(11, 1), key="KompasFilter"),
+        sg.Button("Laplacian Operator", size=(14, 1), key="LaplacianFilter"),
+        sg.Button("Kompas Operator", size=(14, 1), key="KompasFilter"),
     ]
 ]
 
@@ -663,7 +663,7 @@ while True:
     elif event == "Gradien1Filter":
 
         try:
-            window["Gradien1Filter"].update("Gradien1 Filter")
+            window["Gradien1Filter"].update("Gradien1 Operator")
             img_output = Gradien1Filter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
@@ -673,7 +673,7 @@ while True:
     elif event == "CenterDifFilter":
 
         try:
-            window["CenterDifFilter"].update("CenterDif Filter")
+            window["CenterDifFilter"].update("CenterDif Operator")
             img_output = CenterDifFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
@@ -683,7 +683,7 @@ while True:
     elif event == "SobelFilter":
 
         try:
-            window["SobelFilter"].update("Sobel Filter")
+            window["SobelFilter"].update("Sobel Operator")
             img_output = SobelFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
@@ -693,7 +693,7 @@ while True:
     elif event == "PrewittFilter":
 
         try:
-            window["PrewittFilter"].update("Prewitt Filter")
+            window["PrewittFilter"].update("Prewitt Operator")
             img_output = PrewittFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
@@ -703,8 +703,28 @@ while True:
     elif event == "RobertFilter":
 
         try:
-            window["RobertFilter"].update("Robert Filter")
+            window["RobertFilter"].update("Robert Operator")
             img_output = RobertFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "LaplacianFilter":
+
+        try:
+            window["LaplacianFilter"].update("Laplacian Operator")
+            img_output = LaplacianFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "KompasFilter":
+
+        try:
+            window["KompasFilter"].update("Kompas Operator")
+            img_output = KompasFilter(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:

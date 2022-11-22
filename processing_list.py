@@ -1597,3 +1597,202 @@ def RobertFilter(img_input, coldepth):
         img_output = img_output.convert("RGB")
 
     return img_output
+
+
+def LaplacianFilter(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+        # output_image_2 = Image.new(
+        #     'RGB', (img_input.size[0], img_input.size[1]))
+        # output_pixels_2 = output_image_2.load()
+
+    # laplacian filter memiliki 4 box kernel
+    # akan digunakan salah 1 dari box kernel tersebut
+    box_kernel = [
+        [0, 1, 0],
+        [1, -4, 1],
+        [0, 1, 0]]
+
+    # box_kernel = [
+    #     [-1, -1, -1],
+    #     [-1, 8, -1],
+    #     [-1, -1, -1]]
+
+    # box_kernel = [
+    #     [1, -2, 1],
+    #     [-2, 4, -2],
+    #     [1, -2, 1]]
+
+    # box_kernel = [
+    #     [1, 4, 1],
+    #     [4, -20, 4],
+    #     [1, 4, 1]]
+
+    kernel = box_kernel
+    offset = len(kernel)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            pixel_sx = [0, 0, 0]
+
+            for a in range(len(kernel)):
+                for b in range(len(kernel)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    pixel_sx[0] += pixel[0] * kernel[a][b]
+                    pixel_sx[1] += pixel[1] * kernel[a][b]
+                    pixel_sx[2] += pixel[2] * kernel[a][b]
+
+            output_pixels[x, y] = (pixel_sx[0], pixel_sx[1], pixel_sx[2])
+
+    # # applying the filter
+    # for i in range(offset, img_input.size[0] - offset):
+    #     for j in range(offset, img_input.size[1] - offset):
+    #         r, g, b = img_input.getpixel((i, j))
+    #         r2, g2, b2 = output_image_2.getpixel((i, j))
+    #         r_sum = r - r2
+    #         g_sum = g - g2
+    #         b_sum = b - b2
+    #         output_pixels_2[i, j] = (r_sum, g_sum, b_sum)
+
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image
+
+
+def KompasFilter(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+    # Kompas filter memiliki 8 box kernel sesuai arah mata angin
+    # akan digunakan salah 1 dari box kernel tersebut
+
+    # north
+    box_kernel = [
+        [-1, -1, -1],
+        [1, -2, 1],
+        [1, 1, 1]]
+
+    # north_east
+    # box_kernel = [
+    #     [1, -1, -1],
+    #     [1, -2, -1],
+    #     [1, 1, 1]]
+
+    # east
+    # box_kernel = [
+    #     [1, 1, -1],
+    #     [1, -2, -1],
+    #     [1, 1, -1]]
+
+    # south east
+    # box_kernel = [
+    #     [1, 1, 1],
+    #     [1, -2, -1],
+    #     [1, -1, -1]]
+
+    # south
+    # box_kernel = [
+    #     [1, 1, 1],
+    #     [1, -2, 1],
+    #     [-1, -1, -1]]
+
+    # south west
+    # box_kernel = [
+    #     [1, 1, 1],
+    #     [-1, -2, 1],
+    #     [-1, -1, 1]]
+
+    # west
+    # box_kernel = [
+    #     [-1, 1, 1],
+    #     [-1, -2, 1],
+    #     [-1, 1, 1]]
+
+    # north west
+    # box_kernel = [
+    #     [-1, -1, 1],
+    #     [-1, -2, 1],
+    #     [1, 1, 1]]
+
+    kernel = box_kernel
+    offset = len(kernel)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            pixel_sx = [0, 0, 0]
+
+            for a in range(len(kernel)):
+                for b in range(len(kernel)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    pixel_sx[0] += pixel[0] * kernel[a][b]
+                    pixel_sx[1] += pixel[1] * kernel[a][b]
+                    pixel_sx[2] += pixel[2] * kernel[a][b]
+
+            output_pixels[x, y] = (pixel_sx[0], pixel_sx[1], pixel_sx[2])
+
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image
+
+
+def RobertsFilterX(img_input, coldepth):
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    pixels = img_input.load()
+    horizontalSize = img_input.size[0]
+    verticalSize = img_input.size[1]
+    img_output = Image.new('RGB', (horizontalSize, verticalSize))
+    newPixels = img_output.load()
+
+    sx = [[0, 1], [-1, 0]]
+    offset = len(sx)//2
+
+    for i in range(offset, horizontalSize-offset):
+        for j in range(offset, verticalSize-offset):
+            xRGB = [0, 0, 0]
+            for k in range(len(sx)):
+                for l in range(len(sx)):
+                    r, g, b = pixels[i+k-offset, j+l-offset]
+                    xRGB[0] += r*sx[k][l]
+                    xRGB[1] += g*sx[k][l]
+                    xRGB[2] += b*sx[k][l]
+
+            for k in range(len(xRGB)):
+                xRGB[k] = abs(xRGB[k])
+
+            newPixels[i, j] = (xRGB[0], xRGB[1], xRGB[2])
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
