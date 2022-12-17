@@ -358,7 +358,7 @@ def ImgTranslasiXY(img_input, coldepth, x, y):
             new_x = i - x
             new_y = j - y
 
-            if(new_x >= img_input.size[0] or new_y >= img_input.size[1] or new_x < 0 or new_y < 0):
+            if (new_x >= img_input.size[0] or new_y >= img_input.size[1] or new_x < 0 or new_y < 0):
                 pixels[i, j] = (0, 0, 0)
             else:
                 pixels[i, j] = img_input_pixels[new_x, new_y]
@@ -1796,3 +1796,272 @@ def RobertsFilterX(img_input, coldepth):
         img_output = img_output.convert("RGB")
 
     return img_output
+
+
+def GaussianFilter(img_input, coldepth):
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    pixels = img_input.load()
+    horizontalSize = img_input.size[0]
+    verticalSize = img_input.size[1]
+    img_output = Image.new('RGB', (horizontalSize, verticalSize))
+    newPixels = img_output.load()
+
+    sx = [[1, 2, 1],
+          [2, 4, 2],
+          [1, 2, 1]]
+    offset = len(sx)//2
+
+    for i in range(offset, horizontalSize-offset):
+        for j in range(offset, verticalSize-offset):
+            xRGB = [0, 0, 0]
+            for k in range(len(sx)):
+                for l in range(len(sx)):
+                    r, g, b = pixels[i+k-offset, j+l-offset]
+                    xRGB[0] += r*sx[k][l]
+                    xRGB[1] += g*sx[k][l]
+                    xRGB[2] += b*sx[k][l]
+
+            for k in range(len(xRGB)):
+                xRGB[k] = xRGB[k]//16
+
+            newPixels[i, j] = (xRGB[0], xRGB[1], xRGB[2])
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# Erotion Filter dengan kernel 3x3
+
+
+def Erosion(img_input, coldepth):
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    pixels = img_input.load()
+    horizontalSize = img_input.size[0]
+    verticalSize = img_input.size[1]
+    img_output = Image.new('RGB', (horizontalSize, verticalSize))
+    newPixels = img_output.load()
+
+    sx = [[0, 1, 0],
+          [1, 1, 1],
+          [0, 1, 0]]
+    offset = len(sx)//2
+
+    for i in range(offset, horizontalSize-offset):
+        for j in range(offset, verticalSize-offset):
+            xRGB = [0, 0, 0]
+            for k in range(len(sx)):
+                for l in range(len(sx)):
+                    r, g, b = pixels[i+k-offset, j+l-offset]
+                    xRGB[0] += r*sx[k][l]
+                    xRGB[1] += g*sx[k][l]
+                    xRGB[2] += b*sx[k][l]
+
+            for k in range(len(xRGB)):
+                xRGB[k] = xRGB[k]//4
+
+            newPixels[i, j] = (xRGB[0], xRGB[1], xRGB[2])
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# dilation filter dengan kernel 3x3
+
+
+def Dilation(img_input, coldepth):
+    if coldepth != 24:
+        img_input = img_input.convert('RGB')
+
+    pixels = img_input.load()
+    horizontalSize = img_input.size[0]
+    verticalSize = img_input.size[1]
+    img_output = Image.new('RGB', (horizontalSize, verticalSize))
+    newPixels = img_output.load()
+
+    sx = [[1, 1, 1],
+          [1, 1, 1],
+          [1, 1, 1]]
+    offset = len(sx)//2
+
+    for i in range(offset, horizontalSize-offset):
+        for j in range(offset, verticalSize-offset):
+            xRGB = [0, 0, 0]
+            for k in range(len(sx)):
+                for l in range(len(sx)):
+                    r, g, b = pixels[i+k-offset, j+l-offset]
+                    xRGB[0] += r*sx[k][l]
+                    xRGB[1] += g*sx[k][l]
+                    xRGB[2] += b*sx[k][l]
+
+            for k in range(len(xRGB)):
+                xRGB[k] = xRGB[k]//9
+
+            newPixels[i, j] = (xRGB[0], xRGB[1], xRGB[2])
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# opening filter
+
+
+def Opening(img_input, coldepth):
+    img_output = Erosion(img_input, coldepth)
+    img_output = Dilation(img_output, coldepth)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# closing filter
+
+
+def Closing(img_input, coldepth):
+    img_output = Dilation(img_input, coldepth)
+    img_output = Erosion(img_output, coldepth)
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+    else:
+        img_output = img_output.convert("RGB")
+
+    return img_output
+
+# WhiteTopHat filter
+# BELUM MAU BINARY
+
+
+def WhiteTopHat(img_input, coldepth):
+    img_output = Opening(img_input, coldepth)
+    # buat canvas kosong
+    canvas = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    canvasPixels = canvas.load()
+    # perulangan untuk mengurangi nilai pixel input dengan output
+    for i in range(img_input.size[0]):
+        for j in range(img_input.size[1]):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_output.getpixel((i, j))
+            r_new = r-r2
+            g_new = g-g2
+            b_new = b-b2
+            # cek jika melebihi 255 maka di set 255
+            # cek jika kurang dari 0 maka di set 0
+            if r_new > 255:
+                r_new = 255
+            elif r_new < 0:
+                r_new = 0
+            if g_new > 255:
+                g_new = 255
+            elif g_new < 0:
+                g_new = 0
+            if b_new > 255:
+                b_new = 255
+            elif b_new < 0:
+                b_new = 0
+
+            # lakukan thresholding
+            # if r_new > 127:
+            #     r_new = 255
+            # else:
+            #     r_new = 0
+            # if g_new > 127:
+            #     g_new = 255
+            # else:
+            #     g_new = 0
+            # if b_new > 127:
+            #     b_new = 255
+            # else:
+            #     b_new = 0
+
+            canvasPixels[i, j] = (r_new, g_new, b_new)
+
+    if coldepth == 1:
+        canvas = canvas.convert("1")
+    elif coldepth == 8:
+        canvas = canvas.convert("L")
+    else:
+        canvas = canvas.convert("RGB")
+
+    return canvas
+
+# BlackTopHat filter
+# BELUM MAU BINARY
+
+def BlackTopHat(img_input, coldepth):
+    img_output = Closing(img_input, coldepth)
+    # buat canvas kosong
+    canvas = Image.new('RGB', (img_input.size[0], img_input.size[1]))
+    canvasPixels = canvas.load()
+    # perulangan untuk mengurangi nilai pixel input dengan output
+    for i in range(img_input.size[0]):
+        for j in range(img_input.size[1]):
+            r, g, b = img_input.getpixel((i, j))
+            r2, g2, b2 = img_output.getpixel((i, j))
+            r_new = r-r2
+            g_new = g-g2
+            b_new = b-b2
+            # cek jika melebihi 255 maka di set 255
+            # cek jika kurang dari 0 maka di set 0
+            if r_new > 255:
+                r_new = 255
+            elif r_new < 0:
+                r_new = 0
+            if g_new > 255:
+                g_new = 255
+            elif g_new < 0:
+                g_new = 0
+            if b_new > 255:
+                b_new = 255
+            elif b_new < 0:
+                b_new = 0
+
+            # lakukan thresholding
+            # if r_new > 127:
+            #     r_new = 255
+            # else:
+            #     r_new = 0
+            # if g_new > 127:
+            #     g_new = 255
+            # else:
+            #     g_new = 0
+            # if b_new > 127:
+            #     b_new = 255
+            # else:
+            #     b_new = 0
+
+            canvasPixels[i, j] = (r_new, g_new, b_new)
+
+    if coldepth == 1:
+        canvas = canvas.convert("1")
+    elif coldepth == 8:
+        canvas = canvas.convert("L")
+    else:
+        canvas = canvas.convert("RGB")
+
+    return canvas

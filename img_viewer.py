@@ -51,10 +51,6 @@ image_viewer_column = [
 list_processing = [
     [sg.HSeparator()],
     [
-        sg.Text("Transformasi Aritmatika"),
-    ],
-    [sg.HSeparator()],
-    [
         sg.Button("Image Negative", size=(12, 1), key="ImgNegative"),
         sg.Button("Image Brightness", size=(14, 1), key="ImgBrightness"),
     ],
@@ -69,14 +65,8 @@ list_processing = [
     ],
     [
         sg.Button("Image Blending", size=(20, 1), key="ImgBlending"),
-    ],
-    [
-        sg.Text("Tingkat Blending:"),
+        sg.Text("Nilai:"),
         sg.In(size=(5, 1), key="input2"),
-    ],
-    [sg.HSeparator()],
-    [
-        sg.Text("Transformasi Geometri"),
     ],
     [sg.HSeparator()],
     [
@@ -172,7 +162,24 @@ list_processing = [
     [
         sg.Button("Laplacian Operator", size=(14, 1), key="LaplacianFilter"),
         sg.Button("Kompas Operator", size=(14, 1), key="KompasFilter"),
-    ]
+    ],
+    [
+        sg.Button("Gaussian Filter", size=(14, 1), key="GaussianFilter"),
+        sg.Button("Canny Operator", size=(14, 1), key="CannyFilter"),
+    ],
+    [sg.HSeparator()],
+    [
+        sg.Button("Erotion", size=(14, 1), key="Erotion"),
+        sg.Button("Dilation", size=(14, 1), key="Dilation"),
+    ],
+    [
+        sg.Button("Opening", size=(14, 1), key="Opening"),
+        sg.Button("Closing", size=(14, 1), key="Closing"),
+    ],
+    [
+        sg.Button("White Top Hat", size=(14, 1), key="WhiteTopHat"),
+        sg.Button("Black Top Hat", size=(14, 1), key="BlackTopHat"),
+    ],
 ]
 
 
@@ -730,5 +737,74 @@ while True:
         except:
             pass
 
+    elif event == "GaussianFilter":
+
+        try:
+            window["GaussianFilter"].update("Gaussian Filter")
+            img_output = GaussianFilter(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Erotion":
+
+        try:
+            window["Erotion"].update("Erotion")
+            img_output = Erosion(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Dilation":
+
+        try:
+            window["Dilation"].update("Dilation")
+            img_output = Dilation(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Opening":
+
+        try:
+            window["Opening"].update("Opening")
+            img_output = Opening(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Closing":
+
+        try:
+            window["Closing"].update("Closing")
+            img_output = Opening(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "WhiteTopHat":
+
+        try:
+            window["WhiteTopHat"].update("WhiteTopHat")
+            img_output = WhiteTopHat(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "BlackTopHat":
+
+        try:
+            window["BlackTopHat"].update("BlackTopHat")
+            img_output = BlackTopHat(img_input, coldepth)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
 
 window.close()
