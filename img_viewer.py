@@ -100,12 +100,9 @@ list_processing = [
     ],
     [sg.HSeparator()],
     [
-        sg.Text("Zoom: "),
+        sg.Text("Zoom:"),
         sg.Button("Zoom In", size=(8, 1), key="ImgZoomIn"),
         sg.Button("Zoom Out", size=(8, 1), key="ImgShrinking"),
-    ],
-    [
-        sg.Text("skala:"),
         sg.In(size=(5, 1), key="skala"),
     ],
     [sg.HSeparator()],
@@ -165,7 +162,7 @@ list_processing = [
     ],
     [
         sg.Button("Gaussian Filter", size=(14, 1), key="GaussianFilter"),
-        sg.Button("Canny Operator", size=(14, 1), key="CannyFilter"),
+        sg.Button("Test Segmentation", size=(14, 1), key="Segmentation"),
     ],
     [sg.HSeparator()],
     [
@@ -180,8 +177,21 @@ list_processing = [
         sg.Button("White Top Hat", size=(14, 1), key="WhiteTopHat"),
         sg.Button("Black Top Hat", size=(14, 1), key="BlackTopHat"),
     ],
+    [
+        sg.Text("R:"),
+        sg.In(size=(5, 1), key="RSpace"),
+        sg.Text("G:"),
+        sg.In(size=(5, 1), key="GSpace"),
+        sg.Text("B:"),
+        sg.In(size=(5, 1), key="BSpace"),
+    ],
+    [
+        sg.Button("RGB Color Space", size=(14, 1), key="ColorSpace"),
+        sg.Text("Scol:"),
+        sg.In(size=(5, 1), key="Scol"),
+        sg.Button("Desaturate", size=(14, 1), key="Desaturate"),
+    ],
 ]
-
 
 # Kolom Area No 4: Area viewer image output
 image_viewer_column2 = [
@@ -751,7 +761,7 @@ while True:
 
         try:
             window["Erotion"].update("Erotion")
-            img_output = Erosion(img_input, coldepth)
+            img_output = Erotion(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
@@ -761,7 +771,7 @@ while True:
 
         try:
             window["Dilation"].update("Dilation")
-            img_output = Dilation(img_input, coldepth)
+            img_output = DilationBinary(img_input, coldepth)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
@@ -807,4 +817,36 @@ while True:
         except:
             pass
 
+    elif event == "ColorSpace":
+
+        try:
+            window["ColorSpace"].update("ColorSpace")
+            r = int(values["RSpace"])
+            g = int(values["GSpace"])
+            b = int(values["BSpace"])
+            img_output = RGBColorSpace(img_input, coldepth, r, g, b)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Desaturate":
+        try:
+            window["Desaturate"].update("Desaturate")
+            Scol = int(values["Scol"])
+            img_output = Desaturate(img_input, coldepth, Scol)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
+
+    elif event == "Segmentation":
+        try:
+            window["Desaturate"].update("Desaturate")
+            Threshold = int(values["Scol"])
+            img_output = Segmentation(img_input, coldepth, Scol)
+            img_output.save(filename_out)
+            window["ImgOutputViewer"].update(filename=filename_out)
+        except:
+            pass
 window.close()
