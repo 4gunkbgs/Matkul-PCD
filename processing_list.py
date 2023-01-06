@@ -2212,8 +2212,10 @@ def Desaturate(img_input, coldepth, Scol):
 
     return img_output
 
-#image segmentation
-def Segmentation(img_input, coldepth, threshold):
+# image segmentation
+
+
+def Segmentation(img_input, coldepth, threshold, color):
     if coldepth != 24:
         img_input = img_input.convert('RGB')
 
@@ -2223,23 +2225,34 @@ def Segmentation(img_input, coldepth, threshold):
     img_output = Image.new('RGB', (horizontalSize, verticalSize))
     newPixels = img_output.load()
 
-    # image segmentation
+    # image segmentation with RGB color space
     for i in range(horizontalSize):
         for j in range(verticalSize):
             xRGB = pixels[i, j]
             xR = xRGB[0]
             xG = xRGB[1]
             xB = xRGB[2]
-            x = (xR + xG + xB) // 3
-            if x > threshold:
-                xR = 255
-                xG = 255
-                xB = 255
-            else:
-                xR = 0
-                xG = 0
-                xB = 0
-            newPixels[i, j] = (xR, xG, xB)
+            if color == "R":
+                if xR > threshold:
+                    if xR > threshold and xG < xR/4 and xB < xR/4:
+                        newPixels[i, j] = (255, 0, 0)
+                else:
+                    newPixels[i, j] = (0, 0, 0)
+            elif color == "G":
+                if xG > threshold:
+                    newPixels[i, j] = (0, 255, 0)
+                else:
+                    newPixels[i, j] = (0, 0, 0)
+            elif color == "B":
+                if xB > threshold:
+                    newPixels[i, j] = (0, 0, 255)
+                else:
+                    newPixels[i, j] = (0, 0, 0)
+            elif color == "Y":
+                if xR > threshold and xG > threshold and xB > threshold:
+                    newPixels[i, j] = (255, 255, 0)
+                else:
+                    newPixels[i, j] = (0, 0, 0)
 
     if coldepth == 1:
         img_output = img_output.convert("1")
@@ -2249,3 +2262,62 @@ def Segmentation(img_input, coldepth, threshold):
         img_output = img_output.convert("RGB")
 
     return img_output
+
+
+def CannyEdgeDetection(img_input, coldepth):
+    if coldepth != 25:
+        img_input = img_input.convert("RGB")
+        input_pixels = img_input.load()
+
+        output_image = Image.new(
+            'RGB', (img_input.size[0], img_input.size[1]))
+        output_pixels = output_image.load()
+
+    # canny edge detection filter memiliki 4 box kernel
+    # akan digunakan salah 1 dari box kernel tersebut
+    box_kernel = [
+        [-1, -1, -1],
+        [-1, 8, -1],
+        [-1, -1, -1]]
+
+    # box_kernel = [
+    #     [-1, -1, -1],
+    #     [-1, 9, -1],
+    #     [-1, -1, -1]]
+
+    # box_kernel = [
+    #     [-1, -1, -1],
+    #     [-1, 10, -1],
+    #     [-1, -1, -1]]
+
+    # box_kernel = [
+    #     [-1, -1, -1],
+    #     [-1, 11, -1],
+    #     [-1, -1, -1]]
+
+    kernel = box_kernel
+    offset = len(kernel)//2
+
+    for x in range(offset, img_input.size[0] - offset):
+        for y in range(offset, img_input.size[1] - offset):
+            pixel_sx = [0, 0, 0]
+
+            for a in range(len(kernel)):
+                for b in range(len(kernel)):
+                    xn = x + a - offset
+                    yn = y + b - offset
+                    pixel = input_pixels[xn, yn]
+                    pixel_sx[0] += pixel[0] * kernel[a][b]
+                    pixel_sx[1] += pixel[1] * kernel[a][b]
+                    pixel_sx[2] += pixel[2] * kernel[a][b]
+
+            output_pixels[x, y] = (pixel_sx[0], pixel_sx[1], pixel_sx[2])
+
+    if coldepth == 1:
+        output_image = output_image.convert("1")
+    elif coldepth == 8:
+        output_image = output_image.convert("L")
+    else:
+        output_image = output_image.convert("RGB")
+
+    return output_image

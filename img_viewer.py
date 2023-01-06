@@ -163,6 +163,7 @@ list_processing = [
     [
         sg.Button("Gaussian Filter", size=(14, 1), key="GaussianFilter"),
         sg.Button("Test Segmentation", size=(14, 1), key="Segmentation"),
+        sg.In(size=(4, 1), key="Rgb"),
     ],
     [sg.HSeparator()],
     [
@@ -842,9 +843,10 @@ while True:
 
     elif event == "Segmentation":
         try:
-            window["Desaturate"].update("Desaturate")
-            Threshold = int(values["Scol"])
-            img_output = Segmentation(img_input, coldepth, Scol)
+            window["Segmentation"].update("Segmentation")
+            threshold = int(values["input1"])
+            color = values["Rgb"]
+            img_output = Segmentation(img_input, coldepth, threshold, color)
             img_output.save(filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
